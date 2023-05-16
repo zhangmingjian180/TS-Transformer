@@ -1,0 +1,6 @@
+tensorboardX
+tensorboard
+pandas
+seaborn
+tqdm
+scikit-learn

@@ -2,6 +2,7 @@ import pickle
 import os
 import numpy as np
 import queue
+import re
 
 
 import scipy.io
@@ -10,6 +11,15 @@ from sklearn.model_selection import train_test_split
 import utils.config
 
 from utils.preprocess import get_sorted_keys
+
+
+def regular_file_list(original_file_list, regular):
+    new_list = []
+    for filename in original_file_list:
+        if re.match(regular, filename):
+            new_list.append(filename)
+
+    return new_list
 
 
 def get_order_to_cross(labels):
@@ -43,7 +53,7 @@ def normalize_DEAP(x):
 ## This function is used to load single subject.
 # @param class_labels: point to labels to classify (default -1, 0, 1).
 #
-def load_SEED(root, class_labels=utils.config.labels):
+def load_SEED(root, class_labels=utils.config.SEED_labels):
     all_dir_list = get_sorted_keys(os.listdir(root))
 
     data_paths = []

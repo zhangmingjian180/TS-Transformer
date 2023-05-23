@@ -138,6 +138,7 @@ def process_SEED(destination_dir, source_dir, labels, win_length, win_move):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--dataset", default="SEED")
     parser.add_argument("--destination_dir", default="./data/clipped_data/SEED")
     parser.add_argument("--source_dir", default="./data/row_data/SEED")
     parser.add_argument("--win_length", type=int, default=400, help="the length of channel")
@@ -146,11 +147,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
 
-    dataset = os.path.split(args.source_dir)[-1]
-
-    if dataset == "SEED":
-        process_SEED(args.destination_dir, args.source_dir, utils.config.labels, args.win_length, args.win_move)
-    elif dataset == "SEED_IV":
+    if args.dataset == "SEED":
+        process_SEED(args.destination_dir, args.source_dir, utils.config.SEED_labels, args.win_length, args.win_move)
+    elif args.dataset == "SEED_IV":
         process_SEED_IV(args.destination_dir, args.source_dir, utils.config.SEED_IV_labels, args.win_length, args.win_move)
     else:
         raise Exception("Error about dataset")

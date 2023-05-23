@@ -66,3 +66,26 @@ class MyDataset_DEAP(Dataset):
         x_start_point = index // self.sample_of_trial * self.trial_length + index % self.sample_of_trial * self.window_length
         return normalize_DEAP(self.x[:, x_start_point:x_start_point+self.sample_length]), self.y[index//self.sample_of_trial]
 
+
+def gen_MyDataset_DEAP(sample_length, window_length):
+    class MyDataset_DEAP(Dataset):
+        def __init__(self, x, y):
+            super().__init__()
+            assert x.shape[2] % window_length == 0, "The length of window is error!"
+            self.trial_num = x.shape[0]
+            self.trial_length = x.shape[2]
+        
+            self.x = x.transpose(1, 0, 2).reshape(x.shape[1], -1)
+            self.y = y
+            self.sample_length = sample_length
+            self.window_length = window_length
+            self.sample_of_trial = (self.trial_length - self.sample_length) // self.window_length + 1
+
+        def __len__(self):
+            return self.trial_num * self.sample_of_trial
+    
+        def __getitem__(self, index):
+            x_start_point = index // self.sample_of_trial * self.trial_length + index % self.sample_of_trial * self.window_length
+            return normalize_DEAP(self.x[:, x_start_point:x_start_point+self.sample_length]), self.y[index//self.sample_of_trial]
+    
+    return MyDataset_DEAP

@@ -3,8 +3,6 @@ Emotion recognition base on EEG.
 
 
 1. Please delete all "delete_this" file as follows. The purpose of these files is only to keep the folder non empty.
-    data/row_data/SEED/delete_this
-    data/row_data/DEAP/delete_this
     data/clipped_data/SEED/delete_this
     results/delete_this
 

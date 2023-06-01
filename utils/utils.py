@@ -51,7 +51,10 @@ def normalize_DEAP(x):
 
 
 ## This function is used to load single subject.
+# @param root: root directory which include 15 sub dir.
 # @param class_labels: point to labels to classify (default -1, 0, 1).
+# @return data_paths: shape(15, N)
+# @return labels: shape(15, N)
 #
 def load_SEED(root, class_labels=utils.config.SEED_labels):
     all_dir_list = get_sorted_keys(os.listdir(root))
@@ -199,4 +202,48 @@ def get_dataset_train_val_test_from_SEED_IV(root):
     test_paths, test_labels = get_paths_and_labels(root, dataset_partition["test"], utils.config.SEED_IV_class_labels)
 
     return train_paths, train_labels, val_paths, val_labels, test_paths, test_labels
+
+
+def classify(all_dir_list):
+    # build empty dict.
+    result_dict = {}
+    for i in range(1, 16):
+        result_dict[i] = []
+    for e in all_dir_list:
+        i = int(e.split("_")[0])
+        result_dict[i].append(e)
+    return result_dict
+
+
+# The has been passed test.
+def load_SEED_independent(dirname, regular_str, class_labels=utils.config.SEED_labels):
+    tmp_file_list = os.listdir(dirname)
+    all_dir_list = regular_file_list(tmp_file_list, regular_str)
+
+    result_dict = classify(all_dir_list)
+
+    data_paths = [[]] * 15
+    labels = [[]] * 15
+
+    for i in range(1, 16):
+        for j in range(3):
+            session_paths = []
+            session_labels = []
+
+            dir_name = os.path.join(dirname, result_dict[i][j])
+            info_file = os.path.join(dir_name, "info_list.pkl")
+            info_list = load_pickle(info_file)
+            for info in info_list:
+                if info["label"] in class_labels:
+                    session_paths.append(os.path.join(dir_name, info["path"]))
+                    session_labels.append(class_labels.index(info["label"]))
+
+            data_paths[i-1] = data_paths[i-1] + session_paths
+            labels[i-1] = labels[i-1] + session_labels
+
+    return data_paths, labels
+
+
+
+
 

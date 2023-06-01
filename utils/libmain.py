@@ -169,6 +169,10 @@ def gen_cross_validate(args, model_class, fold_num, split_database_gen, MyDatase
         acc_list = []
         database_gen = split_database_gen(data, labels, fold_num)
         for fold in range(fold_num):
+            """
+            if fold not in [5, 11]:
+                continue
+            """
             # get database of train, val.
             data_train, labels_train, data_val, labels_val = database_gen.__next__()
             train_database = MyDataset_class(data_train, labels_train)

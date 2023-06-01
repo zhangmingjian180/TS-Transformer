@@ -16,24 +16,31 @@ def add_dir(info_list, dirname):
         info_list[i]["path"] = os.path.join(dirname, info_list[i]["path"])
 
 
-def notmalize_array(array):
-    """
+def linear_norm(array):
     for i in range(array.shape[0]):
         array[i][...] = (array[i] - array[i].mean()) / array.std()
-    """
-    array = np.tanh(array / 100)
-
     return array
 
 
-def output_array_to_dir(destination_dir, source_matrix, label, win_length, win_move):
+def nonlinear_and_remove_mean_norm(array, r=100):
+    array = array - np.mean(array, axis=0)
+    array = np.tanh(array / r)
+    return array
+
+
+def nonlinear_norm(array, r=100):
+    array = np.tanh(array / r)
+    return array
+
+
+def output_array_to_dir(destination_dir, source_matrix, label, win_length, win_move, normalize_array=nonlinear_and_remove_mean_norm):
     # split matrix
     matrix_list = split_matrix(source_matrix, win_length, win_move)
 
     # transfor and save graph, record in information list
     info_list = []
     for i in range(len(matrix_list)):
-        array = notmalize_array(matrix_list[i])
+        array = normalize_array(matrix_list[i])
         filename = str(i) + ".pkl"
         save_path = os.path.join(destination_dir, filename)
         
@@ -142,7 +149,7 @@ if __name__ == "__main__":
     parser.add_argument("--destination_dir", default="./data/clipped_data/SEED")
     parser.add_argument("--source_dir", default="./data/row_data/SEED")
     parser.add_argument("--win_length", type=int, default=400, help="the length of channel")
-    parser.add_argument("--win_move", type=int, default=80, help="the length of window moving")
+    parser.add_argument("--win_move", type=int, default=320, help="the length of window moving")
 
     args = parser.parse_args()
     print(args)
